@@ -20,6 +20,11 @@ class SiswaController extends Controller
             }catch (\Exception $e) { 
                 Log::error('Error: ' . $e->getMessage()); 
                 return response()->json(['error' => 'Gagal mengambil data siswa.'], 500);
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                return response()->json([
+                    'error' => 'Validasi gagal',
+                    'details' => $e->errors()
+                ], 422);
             }
     }
 
@@ -37,9 +42,9 @@ class SiswaController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([ 
-            'nama' => 'required|string|max:255', 
-            'kelas' => 'required|string|max:10', 
-            'umur' => 'required|integer', 
+            'nama' => 'required|string|regex:/^[\pL\s]+$/u|max:255', // hanya huruf dan spasi
+            'kelas' => 'required|string|regex:/^(X|XI|XII) (IPA|IPS) [1-9]$/', // format kelas tertentu
+            'umur' => 'required|integer|between:6,18', // rentang umur 6-18 
             ]); 
                
             try { 
@@ -51,7 +56,12 @@ class SiswaController extends Controller
             } catch (\Exception $e) { 
                 Log::error('Error: ' . $e->getMessage()); 
                 return response()->json(['error' => 'Gagal mengambil data siswa.'], 500);
-            }  
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                return response()->json([
+                    'error' => 'Validasi gagal',
+                    'details' => $e->errors()
+                ], 422);
+            } 
     }
 
     /**
@@ -66,7 +76,12 @@ class SiswaController extends Controller
             }catch (\Exception $e) { 
                 Log::error('Error: ' . $e->getMessage()); 
                 return response()->json(['error' => 'Gagal mengambil data siswa.'], 500);
-            } 
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                return response()->json([
+                    'error' => 'Validasi gagal',
+                    'details' => $e->errors()
+                ], 422);
+            }
     }
 
     /**
@@ -86,9 +101,9 @@ class SiswaController extends Controller
             $siswa = Siswa::findOrFail($id); 
                
             $validatedData = $request->validate([ 
-            'nama' => 'sometimes|required|string|max:255', 
-            'kelas' => 'sometimes|required|string|max:10', 
-            'umur' => 'sometimes|required|integer', 
+            'nama' => 'required|string|regex:/^[\pL\s]+$/u|max:255', // hanya huruf dan spasi
+            'kelas' => 'required|string|regex:/^(X|XI|XII) (IPA|IPS) [1-9]$/', // format kelas tertentu
+            'umur' => 'required|integer|between:6,18', // rentang umur 6-18 
             ]); 
                
             $siswa->update($validatedData); 
@@ -99,6 +114,11 @@ class SiswaController extends Controller
             }catch (\Exception $e) { 
                 Log::error('Error: ' . $e->getMessage()); 
                 return response()->json(['error' => 'Gagal mengambil data siswa.'], 500);
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                return response()->json([
+                    'error' => 'Validasi gagal',
+                    'details' => $e->errors()
+                ], 422);
             }
     }            
     
@@ -119,6 +139,11 @@ class SiswaController extends Controller
             }catch (\Exception $e) { 
                 Log::error('Error: ' . $e->getMessage()); 
                 return response()->json(['error' => 'Gagal mengambil data siswa.'], 500);
-            } 
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                return response()->json([
+                    'error' => 'Validasi gagal',
+                    'details' => $e->errors()
+                ], 422);
+            }
     }
 }
